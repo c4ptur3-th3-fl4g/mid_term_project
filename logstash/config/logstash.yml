@@ -4,4 +4,10 @@
 #
 api.http.host: 0.0.0.0
 
+queue.type: persisted
+queue.max_bytes: 10gb
+queue.checkpoint.writes: 1024
+queue.checkpoint.interval: 1000
+
+
 node.name: logstash
