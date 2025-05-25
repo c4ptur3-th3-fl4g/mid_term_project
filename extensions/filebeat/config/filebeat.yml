@@ -9,11 +9,13 @@ filebeat.config:
     path: ${path.config}/modules.d/*.yml
     reload.enabled: false
 
-# filebeat.inputs:
-#   - type: log
-#     enabled: true
-#     paths:
-#       - /var/log/*.log
+filebeat.inputs:
+  - type: filestream
+    id: systems-logs
+    enabled: true
+    paths:
+      - /var/log/auth.log
+      - /var/log/syslog
 
 
 filebeat.autodiscover:
@@ -40,7 +42,8 @@ filebeat.autodiscover:
 
 processors:
   - add_cloud_metadata: ~
-
+  - add_host_metadata: ~
+  - add_docker_metadata: ~
 # monitoring:
 #   enabled: false
   # logstash: 
@@ -55,7 +58,7 @@ processors:
 #   username: filebeat_internal
 #   password: ${FILEBEAT_INTERNAL_PASSWORD}
 output.logstash:
-  hosts: ["http://logstash:5044"]
+  hosts: ["logstash:5044"]
   # username: logstash_internal
   # password: ${LOGSTASH_INTERNAL_PASSWORD}
 
