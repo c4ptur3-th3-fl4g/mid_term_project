@@ -79,6 +79,7 @@ services:
       - 5601:5601
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
+      xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY:-}
     networks:
       - elk
     depends_on:

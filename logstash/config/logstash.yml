@@ -10,4 +10,5 @@ queue.checkpoint.writes: 1024
 queue.checkpoint.interval: 1000
 
 
+
 node.name: logstash
