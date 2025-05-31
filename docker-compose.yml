@@ -33,6 +33,9 @@ services:
     volumes:
       - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro,Z
       - elasticsearch:/usr/share/elasticsearch/data:Z
+  
+      - ~/elastic-certs/node:/usr/share/elasticsearch/config/node:ro # Mount node directory
+      - ~/elastic-certs/ca:/usr/share/elasticsearch/config/ca:ro     # Mount CA directory
     ports:
       - 9200:9200
       - 9300:9300
@@ -40,7 +43,10 @@ services:
       node.name: elasticsearch
       ES_JAVA_OPTS: -Xms512m -Xmx512m
       ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
-
+      xpack.security.http.ssl.certificate: /usr/share/elasticsearch/config/node/instance/instance.crt
+      xpack.security.http.ssl.key: /usr/share/elasticsearch/config/node/instance/instance.key
+      xpack.security.http.ssl.key_passphrase: phuongk16cntt2
+      xpack.security.http.ssl.certificate_authorities: /usr/share/elasticsearch/config/ca/ca.crt
       discovery.type: single-node
     networks:
       - elk
@@ -75,13 +81,26 @@ services:
         ELASTIC_VERSION: ${ELASTIC_VERSION}
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro,Z
+      - ~/elastic-certs/node:/usr/share/kibana/config/node:ro # Mount node directory
+      - ~/elastic-certs/ca:/usr/share/kibana/config/ca:ro   # Mount CA directory
     ports:
       - 5601:5601
     environment:
       KIBANA_SYSTEM_PASSWORD: ${KIBANA_SYSTEM_PASSWORD:-}
       xpack.security.encryptionKey: ${KIBANA_ENCRYPTION_KEY:-}
+      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_CERTIFICATE: /usr/share/kibana/config/node/instance/instance.crt
+      SERVER_SSL_KEY: /usr/share/kibana/config/node/instance/instance.key
+      SERVER_SSL_KEY_PASSPHRASE: phuongk16cntt2
+      SERVER_SSL_CERTIFICATE_AUTHORITIES: /usr/share/kibana/config/ca/ca.crt
+      ELASTICSEARCH_SSL_CERTIFICATE_AUTHORITIES: /usr/share/kibana/config/ca/ca.crt
+      ELASTICSEARCH_SSL_VERIFICATION_MODE: certificate
+      XPACK_FLEET_FLEET_SERVER_HOST: https://172.17.0.1:8220
     networks:
       - elk
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
     depends_on:
       - elasticsearch
     restart: unless-stopped

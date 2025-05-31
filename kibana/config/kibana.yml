@@ -4,7 +4,18 @@
 #
 server.name: kibana
 server.host: 0.0.0.0
-elasticsearch.hosts: [ http://elasticsearch:9200 ]
+
+# Enable HTTPS
+server.ssl.enabled: true
+server.ssl.certificate: /usr/share/kibana/config/node/instance/instance.crt
+server.ssl.key: /usr/share/kibana/config/node/instance/instance.key
+server.ssl.keyPassphrase: phuongk16cntt2
+server.ssl.certificateAuthorities: [ "/usr/share/kibana/config/ca/ca.crt" ]
+
+# Update Elasticsearch connection to use HTTPS
+elasticsearch.hosts: [ "https://elasticsearch:9200" ]
+elasticsearch.ssl.certificateAuthorities: [ "/usr/share/kibana/config/ca/ca.crt" ]
+elasticsearch.ssl.verificationMode: certificate
 
 monitoring.ui.container.elasticsearch.enabled: true
 monitoring.ui.container.logstash.enabled: true
@@ -38,7 +49,7 @@ xpack.fleet.outputs:
   - id: fleet-default-output
     name: default
     type: elasticsearch
-    hosts: [ http://elasticsearch:9200 ]
+    hosts: [ https://172.17.0.1:9200 ]
     is_default: true
     is_default_monitoring: true
 xpack.encryptedSavedObjects.encryptionKey: '8jKnc/+aJwQKsTOTs1SIbktu1u0AcvXNNrPfJ0pdovA='
